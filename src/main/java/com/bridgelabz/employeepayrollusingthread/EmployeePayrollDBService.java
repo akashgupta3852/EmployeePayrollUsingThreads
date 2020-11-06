@@ -240,7 +240,7 @@ public class EmployeePayrollDBService {
 	}
 
 	private void addPayrollDataToPayrollDetails(int id, Double salary, Connection connection) throws CustomException {
-		String sql = "insert into payroll_details (id, basic_pay, deductions, taxable_pay, tax, net_pay) values (?,?,?,?,?,?)";
+		String sql = "insert into payroll_details (employee_id, basic_pay, deductions, taxable_pay, tax, net_pay) values (?,?,?,?,?,?)";
 		try {
 			employeePayrollDataStatement = connection.prepareStatement(sql);
 			double deductions = 0.2 * salary;

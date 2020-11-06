@@ -85,4 +85,22 @@ public class EmployeePayrollService {
 			throws CustomException {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollData(name, gender, salary, startDate));
 	}
+
+	public void addEmployeesToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			try {
+				this.addEmployeeToPayrollData(employeePayrollData.name, employeePayrollData.gender,
+						employeePayrollData.salary, employeePayrollData.startDate.toString());
+			} catch (CustomException e) {
+				e.printStackTrace();
+			}
+		});
+		System.out.println(this.employeePayrollList);
+	}
+
+	public long countEntries(IOService ioService) {
+		if (ioService.equals(IOService.DB_IO))
+			return employeePayrollList.size();
+		return 0;
+	}
 }
