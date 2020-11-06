@@ -90,13 +90,16 @@ public class EmployeePayrollService {
 
 	public void addEmployeesToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
 		employeePayrollDataList.forEach(employeePayrollData -> {
+			System.out.println("Employee Being Added: " + Thread.currentThread().getName());
 			try {
 				this.addEmployeeToPayrollData(employeePayrollData.name, employeePayrollData.gender,
 						employeePayrollData.salary, employeePayrollData.startDate.toString());
 			} catch (CustomException e) {
 				e.printStackTrace();
 			}
+			System.out.println("Employee Added: " + employeePayrollData.name);
 		});
+		System.out.println(this.employeePayrollList);
 	}
 
 	public long countEntries(IOService ioService) {
@@ -110,6 +113,7 @@ public class EmployeePayrollService {
 		employeePayrollDataList.forEach(employeePayrollData -> {
 			Runnable task = () -> {
 				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				System.out.println("Employee Being Added: " + Thread.currentThread().getName());
 				try {
 					this.addEmployeeToPayrollData(employeePayrollData.name, employeePayrollData.gender,
 							employeePayrollData.salary, employeePayrollData.startDate.toString());
@@ -117,13 +121,14 @@ public class EmployeePayrollService {
 					e.printStackTrace();
 				}
 				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				System.out.println("Employee Added: " + employeePayrollData.name);
 			};
 			Thread thread = new Thread(task, employeePayrollData.name);
 			thread.start();
 		});
 		while (employeeAdditionStatus.containsValue(false)) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(600);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

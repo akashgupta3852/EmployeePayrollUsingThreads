@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class EmployeePayrollDBService {
+	private int connectionCounter = 0;
 	private PreparedStatement employeePayrollDataStatement;
 	private static EmployeePayrollDBService employeePayrollDBService;
 
@@ -30,14 +31,19 @@ public class EmployeePayrollDBService {
 		System.out.println("Welcome to Payroll Services Problem");
 	}
 
-	private Connection getConnection() throws CustomException {
+	private synchronized Connection getConnection() throws CustomException {
+		connectionCounter++;
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_services?useSSL=false";
 		String username = "root";
 		String password = "473852";
 		Connection connection = null;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
+			System.out.println("Processing Thread: " + Thread.currentThread().getName()
+					+ " Connecting to database with Id:" + connectionCounter);
 			connection = DriverManager.getConnection(jdbcURL, username, password);
+			System.out.println("Processing Thread: " + Thread.currentThread().getName() + "Id: " + connectionCounter
+					+ " Connecting is successful!!!!!!" + connection);
 			listDrivers();
 		} catch (SQLException e) {
 			e.printStackTrace();
