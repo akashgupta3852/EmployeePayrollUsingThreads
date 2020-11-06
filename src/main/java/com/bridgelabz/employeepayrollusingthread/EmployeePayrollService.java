@@ -128,11 +128,35 @@ public class EmployeePayrollService {
 		});
 		while (employeeAdditionStatus.containsValue(false)) {
 			try {
-				Thread.sleep(600);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		System.out.println(this.employeePayrollList);
+	}
+
+	public void updateSalaryToEmployeePayroll(Map<String, Double> nameSalaryMap) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		nameSalaryMap.forEach((name, salary) -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(name.hashCode(), false);
+				try {
+					this.updateEmployeeSalaryUsingPreparedStatement(name, salary.doubleValue());
+				} catch (CustomException e) {
+					e.printStackTrace();
+				}
+				employeeAdditionStatus.put(name.hashCode(), true);
+			};
+			Thread thread = new Thread(task);
+			thread.start();
+		});
+		while (employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

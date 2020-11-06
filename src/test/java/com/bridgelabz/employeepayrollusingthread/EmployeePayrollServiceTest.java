@@ -4,7 +4,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,7 +92,7 @@ public class EmployeePayrollServiceTest {
 	}
 
 	@Test
-	public void given6Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws CustomException {
+	public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeEntries() throws CustomException {
 		EmployeePayrollData[] arrayOfEmps = { new EmployeePayrollData(0, "Jeff Bezos", "M", 600000.0, LocalDate.now()),
 				new EmployeePayrollData(0, "Bill Gates", "M", 500000.0, LocalDate.now()),
 				new EmployeePayrollData(0, "Mark Zuckerberg", "M", 400000.0, LocalDate.now()),
@@ -107,5 +109,20 @@ public class EmployeePayrollServiceTest {
 		Instant threadEnd = Instant.now();
 		System.out.println("Duration with Thread; " + Duration.between(threadStart, threadEnd));
 		Assert.assertEquals(9, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
+	}
+
+	@Test
+	public void givenNewSalary_whenUpdated_shouldMatch() throws CustomException {
+		employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+		Map<String, Double> nameSalaryMap = new HashMap<>();
+		nameSalaryMap.put("Bill Gates", (double) 800000);
+		nameSalaryMap.put("Mark ZuckerBurg", (double) 710000);
+		nameSalaryMap.put("Sunder Pichai", (double) 900000);
+		Instant start = Instant.now();
+		employeePayrollService.updateSalaryToEmployeePayroll(nameSalaryMap);
+		Instant end = Instant.now();
+		System.out.println("Duration with thread: " + Duration.between(start, end));
+		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Bill Gates");
+		Assert.assertTrue(result);
 	}
 }
