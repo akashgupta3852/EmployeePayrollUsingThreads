@@ -1,7 +1,9 @@
 package com.bridgelabz.employeepayrollusingthread;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService {
 	private List<EmployeePayrollData> employeePayrollList;
@@ -95,12 +97,37 @@ public class EmployeePayrollService {
 				e.printStackTrace();
 			}
 		});
-		System.out.println(this.employeePayrollList);
 	}
 
 	public long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.DB_IO))
 			return employeePayrollList.size();
 		return 0;
+	}
+
+	public void addEmployeesToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				try {
+					this.addEmployeeToPayrollData(employeePayrollData.name, employeePayrollData.gender,
+							employeePayrollData.salary, employeePayrollData.startDate.toString());
+				} catch (CustomException e) {
+					e.printStackTrace();
+				}
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+			};
+			Thread thread = new Thread(task, employeePayrollData.name);
+			thread.start();
+		});
+		while (employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(this.employeePayrollList);
 	}
 }

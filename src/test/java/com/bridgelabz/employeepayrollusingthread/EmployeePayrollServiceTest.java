@@ -22,7 +22,7 @@ public class EmployeePayrollServiceTest {
 	public void givenEmployeePayrollInDB_WhenRetrieved_ShouldMatchEmployeeCount() throws CustomException {
 		List<EmployeePayrollData> employeePayrollList = employeePayrollService
 				.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-		Assert.assertEquals(8, employeePayrollList.size());
+		Assert.assertEquals(15, employeePayrollList.size());
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class EmployeePayrollServiceTest {
 	@Test
 	public void givenPayrollData_WhenTotalCountRetrievedByGender_ShouldReturnProperValue() throws CustomException {
 		int noOfMale = employeePayrollService.countByGender("M");
-		Assert.assertEquals(7, noOfMale);
+		Assert.assertEquals(14, noOfMale);
 	}
 
 	@Test
@@ -102,6 +102,10 @@ public class EmployeePayrollServiceTest {
 		employeePayrollService.addEmployeesToPayroll(Arrays.asList(arrayOfEmps));
 		Instant end = Instant.now();
 		System.out.println("Duration without Thread; " + Duration.between(start, end));
-		Assert.assertEquals(7, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
+		Instant threadStart = Instant.now();
+		employeePayrollService.addEmployeesToPayrollWithThreads(Arrays.asList(arrayOfEmps));
+		Instant threadEnd = Instant.now();
+		System.out.println("Duration with Thread; " + Duration.between(threadStart, threadEnd));
+		Assert.assertEquals(15, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
 	}
 }

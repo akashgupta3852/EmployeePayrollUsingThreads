@@ -1,6 +1,7 @@
 package com.bridgelabz.employeepayrollusingthread;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class EmployeePayrollData {
 	public int id;
@@ -21,6 +22,11 @@ public class EmployeePayrollData {
 	public String toString() {
 		return "id= " + id + ", name= " + name + ", gender= " + gender + ",salary= " + salary + ", startDate="
 				+ startDate;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, gender, salary, startDate);
 	}
 
 	@Override
